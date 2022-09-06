@@ -61,6 +61,18 @@ function read(req, res, next) {
     res.json({ data: res.locals.dish })
 }
 
+function update(req, res, next) {
+    const dish = res.locals.dish
+    const { data: { name, description, price, image_url } = {} } = req.body
+
+    dish.name = name
+    dish.description = description
+    dish.price = price
+    dish.image_url = image_url
+
+    res.json({ data: dish })
+}
+
 module.exports = {
     list,
     create: [
@@ -74,5 +86,13 @@ module.exports = {
     read: [
         dishExists,
         read,
+    ],
+    update: [
+        bodyDataHas("name"),
+        bodyDataHas("description"),
+        bodyDataHas("price"),
+        bodyDataHas("image_url"),
+        dishExists,
+        update,
     ],
 }
