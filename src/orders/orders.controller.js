@@ -136,6 +136,8 @@ module.exports = {
         bodyDataHas("dishes"),
         bodyDataHas("status"),
         statusPropertyIsValid,
+        checkDishesEmpty,
+        checkDishesIsAnArray,
         update
     ],
     delete: [
