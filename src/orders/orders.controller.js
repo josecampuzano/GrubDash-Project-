@@ -3,6 +3,10 @@ const { forEach } = require("../data/orders-data");
 const orders = require(path.resolve("src/data/orders-data"));
 const nextId = require("../utils/nextId");
 
+function list(req, res, next) {
+    res.json({ data: orders })
+}
+
 function bodyDataHas(propertyName) {
     return function (req, res, next) {
         const { data = {} } = req.body
@@ -53,10 +57,25 @@ function create(req, res, next) {
     res.status(201).json({ data: newOrder })
 }
 
+function orderExists(req, res, next) {
+    const { orderId } = req.params
+    const foundOrder = orders.find((order) => order.id == orderId)
+    if (foundOrder) {
+        res.locals.order = foundOrder
+        return next()
+    }
+    next({
+        status: 404,
+        message: `The order with orderId: ${orderId} does not exist`
+    })
+}
 
-
+function read(req, res, next) {
+    res.json({ data: res.locals.order })
+}
 
 module.exports = {
+    list,
     create: [
         bodyDataHas("deliverTo"),
         bodyDataHas("mobileNumber"),
@@ -64,5 +83,9 @@ module.exports = {
         checkDishesEmpty,
         checkDishesIsAnArray,
         create,
+    ],
+    read: [
+        orderExists,
+        read,
     ]
 }
