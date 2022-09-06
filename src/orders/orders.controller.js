@@ -1,5 +1,4 @@
 const path = require("path");
-const { forEach } = require("../data/orders-data");
 const orders = require(path.resolve("src/data/orders-data"));
 const nextId = require("../utils/nextId");
 
@@ -132,6 +131,18 @@ function orderIdValidation(req, res, next) {
     id ? checkIdMatch(id, orderId) : next()
 }
 
+function dishQuantityValidation(req, res, next) {
+    res.locals.dishesArray.forEach((dish, index) => {
+        if(!Number.isInteger(dish.quantity) || dish.quantity <= 0) {
+            return next({
+                status: 400,
+                message: `Dish ${index} must have a quantity that is an integer greater than 0`
+            })
+        }
+    })
+    next()
+}
+
 module.exports = {
     list,
     create: [
@@ -140,6 +151,7 @@ module.exports = {
         bodyDataHas("dishes"),
         checkDishesEmpty,
         checkDishesIsAnArray,
+        dishQuantityValidation,
         create,
     ],
     read: [
@@ -156,6 +168,7 @@ module.exports = {
         statusPropertyIsValid,
         checkDishesEmpty,
         checkDishesIsAnArray,
+        dishQuantityValidation,
         update
     ],
     delete: [

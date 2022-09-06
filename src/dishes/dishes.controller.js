@@ -85,9 +85,6 @@ function dishIdValidation(req, res, next) {
 
 }
 
-
-
-
 function dishExists(req, res, next) {
     const { dishId } = req.params
     const foundDish = dishes.find((dish) => dish.id === dishId)
@@ -142,7 +139,6 @@ module.exports = {
         dishIdValidation,
         checkPriceLessThanZero,
         checkPriceIsANumber,
-        // checkDishIdMatchesDataId,
         update,
     ],
 }
