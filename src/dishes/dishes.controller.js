@@ -63,7 +63,7 @@ function checkDishIdMatchesDataId(req, res, next){
     }
     next({
         status: 400, 
-        message: `The dishId you entered in the path: ${dishId} does not match the dishId in the body: ${id}`
+        message: `The id you entered in the path: ${dishId} does not match the id in the body: ${id}`
     })
 }
 
@@ -120,7 +120,7 @@ module.exports = {
         bodyDataHas("image_url"),
         checkPriceLessThanZero,
         checkPriceIsANumber,
+        checkDishIdMatchesDataId,
         update,
-        // checkDishIdMatchesDataId,
     ],
 }
