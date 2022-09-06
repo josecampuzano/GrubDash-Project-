@@ -74,6 +74,30 @@ function read(req, res, next) {
     res.json({ data: res.locals.order })
 }
 
+function statusPropertyIsValid(req, res, next){
+    const { data: { status } = {} } = req.body
+    const validStatus = ["pending", "preparing", "out-for-delivery", "delivered"]
+    if(validStatus.includes(status)){
+        return next()
+    }
+    next({
+        status: 400,
+        message: `The status property must be one of the following: "pending", "preparing", "out-for-delivery", "delivered"`
+    })
+}
+
+function update(req, res, next) {
+    const order = res.locals.order
+    const { data: { deliverTo, mobileNumber, status, dishes } = {} } = req.body
+
+    order.deliverTo = deliverTo
+    order.mobileNumber = mobileNumber
+    order.status = status
+    order.dishes = dishes
+
+    res.json({ data: order })
+}
+
 module.exports = {
     list,
     create: [
@@ -87,5 +111,14 @@ module.exports = {
     read: [
         orderExists,
         read,
+    ],
+    update: [
+        orderExists,
+        bodyDataHas("deliverTo"),
+        bodyDataHas("mobileNumber"),
+        bodyDataHas("dishes"),
+        bodyDataHas("status"),
+        statusPropertyIsValid,
+        update
     ]
 }
