@@ -44,6 +44,29 @@ function checkPriceLessThanZero(req, res, next) {
     })
 }
 
+function checkPriceIsANumber(req, res, next){
+    const { data: { price } = {} } = req.body
+    if(typeof price == "number"){
+        return next()
+    }
+    next({
+        status: 400,
+        message: "The price must be a number"
+    })
+}
+
+function checkDishIdMatchesDataId(req, res, next){
+    const { data: { id } = {} } = req.body
+    const { dishId } = req.params
+    if(id == dishId) {
+        return next()
+    }
+    next({
+        status: 400, 
+        message: `The dishId you entered in the path: ${dishId} does not match the dishId in the body: ${id}`
+    })
+}
+
 function dishExists(req, res, next) {
     const { dishId } = req.params
     const foundDish = dishes.find((dish) => dish.id === dishId)
@@ -53,6 +76,19 @@ function dishExists(req, res, next) {
     }
     next({
         status: 404,
+        message: `The dish with dishId: ${dishId} does not exist!`,
+    })
+}
+
+function dishToDeleteExists(req, res, next) {
+    const { dishId } = req.params
+    const foundDish = dishes.find((dish) => dish.id === dishId)
+    if (foundDish) {
+        res.locals.dish = foundDish
+        return next()
+    }
+    next({
+        status: 405,
         message: `The dish with dishId: ${dishId} does not exist!`,
     })
 }
@@ -73,6 +109,13 @@ function update(req, res, next) {
     res.json({ data: dish })
 }
 
+function destroy(req, res, next) {
+    const { dishId } = req.params
+    const index = dishes.findIndex((dish) => dish.id === dishId)
+    const deletedDish = dishes.splice(index, 1)
+    res.sendStatus(204)
+}
+
 module.exports = {
     list,
     create: [
@@ -88,11 +131,15 @@ module.exports = {
         read,
     ],
     update: [
+        dishExists,
         bodyDataHas("name"),
         bodyDataHas("description"),
         bodyDataHas("price"),
         bodyDataHas("image_url"),
-        dishExists,
+        checkPriceLessThanZero,
+        checkPriceIsANumber,
         update,
+        // checkDishIdMatchesDataId,
     ],
+
 }
