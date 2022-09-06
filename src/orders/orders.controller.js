@@ -98,6 +98,23 @@ function update(req, res, next) {
     res.json({ data: order })
 }
 
+function checkStatusPending(req, res, next) {
+    const status = res.locals.order.status
+    if (status !== "pending") {
+        next({
+            status: 400,
+            message: `Order can only be deleted when status is pending`
+        })
+    }
+    return next()
+}
+
+function destroy(req, res, next) {
+    const index = orders.findIndex((dish) => dish.id === res.locals.order.id)
+    const deletedOrder = orders.splice(index, 1)
+    res.sendStatus(204)
+}
+
 module.exports = {
     list,
     create: [
@@ -120,5 +137,10 @@ module.exports = {
         bodyDataHas("status"),
         statusPropertyIsValid,
         update
+    ],
+    delete: [
+        orderExists,
+        checkStatusPending,
+        destroy,
     ]
 }

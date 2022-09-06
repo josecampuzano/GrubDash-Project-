@@ -80,19 +80,6 @@ function dishExists(req, res, next) {
     })
 }
 
-function dishToDeleteExists(req, res, next) {
-    const { dishId } = req.params
-    const foundDish = dishes.find((dish) => dish.id === dishId)
-    if (foundDish) {
-        res.locals.dish = foundDish
-        return next()
-    }
-    next({
-        status: 405,
-        message: `The dish with dishId: ${dishId} does not exist!`,
-    })
-}
-
 function read(req, res, next) {
     res.json({ data: res.locals.dish })
 }
@@ -109,12 +96,7 @@ function update(req, res, next) {
     res.json({ data: dish })
 }
 
-function destroy(req, res, next) {
-    const { dishId } = req.params
-    const index = dishes.findIndex((dish) => dish.id === dishId)
-    const deletedDish = dishes.splice(index, 1)
-    res.sendStatus(204)
-}
+
 
 module.exports = {
     list,
