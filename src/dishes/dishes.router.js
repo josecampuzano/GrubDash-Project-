@@ -4,5 +4,6 @@ const controller = require("./dishes.controller")
 // TODO: Implement the /dishes routes needed to make the tests pass
 
 router.route("/").post(controller.create)
+router.route("/:dishId").get(controller.read)
 
 module.exports = router;

@@ -40,6 +40,22 @@ function checkPriceLessThanZero(req, res, next) {
     })
 }
 
+function dishExists(req, res, next) {
+    const { dishId } = req.params
+    const foundDish = dishes.find((dish) => dish.id === dishId)
+    if (foundDish) {
+        res.locals.dish = foundDish
+        return next()
+    }
+    next({
+        status: 404,
+        message: `The dish with dishId: ${dishId} does not exist!`,
+    })
+}
+
+function read(req, res, next) {
+    res.json({ data: res.locals.dish })
+}
 
 module.exports = {
     create: [
@@ -49,5 +65,9 @@ module.exports = {
         bodyDataHas("image_url"),
         checkPriceLessThanZero,
         create,
-    ] 
+    ],
+    read: [
+        dishExists,
+        read,
+    ],
 }
