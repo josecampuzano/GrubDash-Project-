@@ -67,6 +67,27 @@ function checkDishIdMatchesDataId(req, res, next){
     })
 }
 
+function dishIdValidation(req, res, next) {
+    const { data: { id } = {} } = req.body
+    const { dishId } = req.params
+
+    const checkIdMatch = (id, dishId) => {
+        if(id == dishId) {
+            return next()
+        }
+        next({
+            status: 400, 
+            message: `The id you entered in the path: ${dishId} does not match the id in the body: ${id}`
+        })
+    }
+
+    id ? checkIdMatch(id, dishId) : next()
+
+}
+
+
+
+
 function dishExists(req, res, next) {
     const { dishId } = req.params
     const foundDish = dishes.find((dish) => dish.id === dishId)
@@ -118,9 +139,10 @@ module.exports = {
         bodyDataHas("description"),
         bodyDataHas("price"),
         bodyDataHas("image_url"),
+        dishIdValidation,
         checkPriceLessThanZero,
         checkPriceIsANumber,
-        checkDishIdMatchesDataId,
+        // checkDishIdMatchesDataId,
         update,
     ],
 }

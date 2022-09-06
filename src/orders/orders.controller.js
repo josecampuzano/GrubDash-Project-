@@ -115,6 +115,23 @@ function destroy(req, res, next) {
     res.sendStatus(204)
 }
 
+function orderIdValidation(req, res, next) {
+    const { data: { id } = {} } = req.body
+    const { orderId } = req.params
+
+    const checkIdMatch = (id, orderId) => {
+        if (id == orderId) {
+            return next()
+        }
+        next({
+            status: 400,
+            message: `The id you entered in the path ${orderId} does not math the id in the body ${id}`
+        })
+    }
+
+    id ? checkIdMatch(id, orderId) : next()
+}
+
 module.exports = {
     list,
     create: [
@@ -135,6 +152,7 @@ module.exports = {
         bodyDataHas("mobileNumber"),
         bodyDataHas("dishes"),
         bodyDataHas("status"),
+        orderIdValidation,
         statusPropertyIsValid,
         checkDishesEmpty,
         checkDishesIsAnArray,
