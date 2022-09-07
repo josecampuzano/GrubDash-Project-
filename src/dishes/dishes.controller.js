@@ -55,18 +55,6 @@ function checkPriceIsANumber(req, res, next){
     })
 }
 
-function checkDishIdMatchesDataId(req, res, next){
-    const { data: { id } = {} } = req.body
-    const { dishId } = req.params
-    if(id == dishId) {
-        return next()
-    }
-    next({
-        status: 400, 
-        message: `The id you entered in the path: ${dishId} does not match the id in the body: ${id}`
-    })
-}
-
 function dishIdValidation(req, res, next) {
     const { data: { id } = {} } = req.body
     const { dishId } = req.params
@@ -113,6 +101,7 @@ function update(req, res, next) {
 
     res.json({ data: dish })
 }
+
 
 
 
