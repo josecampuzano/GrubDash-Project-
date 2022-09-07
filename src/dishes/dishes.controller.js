@@ -2,11 +2,12 @@ const path = require("path");
 const dishes = require(path.resolve("src/data/dishes-data"));
 const nextId = require("../utils/nextId");
 
-// TODO: Implement the /dishes handlers needed to make the tests pass
+// lists all the dishes
 function list(req, res, next) {
     res.json({ data: dishes })
 }
 
+// call back function used to check that the correct properties are passed in the req.body
 function bodyDataHas(propertyName) {
     return function (req, res, next) {
         const { data = {} } = req.body
@@ -20,6 +21,7 @@ function bodyDataHas(propertyName) {
     }
 }
 
+// creates an entry for a dish
 function create(req, res, next) {
     const { data: { name, description, price, image_url } = {} } = req.body
     const newDish = {
@@ -33,6 +35,7 @@ function create(req, res, next) {
     res.status(201).json({ data: newDish })
 }
 
+// checks that the price property is not less than zero
 function checkPriceLessThanZero(req, res, next) {
     const { data: { price } = {} } = req.body
     if (price >= 0) {
@@ -44,6 +47,7 @@ function checkPriceLessThanZero(req, res, next) {
     })
 }
 
+// checks that the price property is a number
 function checkPriceIsANumber(req, res, next){
     const { data: { price } = {} } = req.body
     if(typeof price == "number"){
@@ -55,6 +59,7 @@ function checkPriceIsANumber(req, res, next){
     })
 }
 
+// if an ID is provided in the req.body on an update method, this function verifies that the id matches the id entered in the path. Goal: prevent user from updating the id
 function dishIdValidation(req, res, next) {
     const { data: { id } = {} } = req.body
     const { dishId } = req.params
@@ -73,6 +78,7 @@ function dishIdValidation(req, res, next) {
 
 }
 
+// checks that the dish exists and establishes res.locals.dish
 function dishExists(req, res, next) {
     const { dishId } = req.params
     const foundDish = dishes.find((dish) => dish.id === dishId)
@@ -86,10 +92,12 @@ function dishExists(req, res, next) {
     })
 }
 
+// reads out the unique dish
 function read(req, res, next) {
     res.json({ data: res.locals.dish })
 }
 
+// updates the dish object 
 function update(req, res, next) {
     const dish = res.locals.dish
     const { data: { name, description, price, image_url } = {} } = req.body

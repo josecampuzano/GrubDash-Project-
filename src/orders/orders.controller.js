@@ -2,10 +2,12 @@ const path = require("path");
 const orders = require(path.resolve("src/data/orders-data"));
 const nextId = require("../utils/nextId");
 
+// lists all the orders
 function list(req, res, next) {
     res.json({ data: orders })
 }
 
+// call back function used to check that the correct properties are passed in the req.body
 function bodyDataHas(propertyName) {
     return function (req, res, next) {
         const { data = {} } = req.body
@@ -19,6 +21,7 @@ function bodyDataHas(propertyName) {
     }
 }
 
+// checks that the dishes property is not empty
 function checkDishesEmpty(req, res, next) { //has res.locals.dishesArray
     const { ...orders } = req.body
     const dishesArray = orders.data.dishes
@@ -32,6 +35,7 @@ function checkDishesEmpty(req, res, next) { //has res.locals.dishesArray
     return next()
 }
 
+// checks that the dished property is an array
 function checkDishesIsAnArray(req, res, next) {
     let result = Array.isArray(res.locals.dishesArray)
     if(result === true) {
@@ -43,6 +47,7 @@ function checkDishesIsAnArray(req, res, next) {
     })
 }
 
+// creates an entry for an order
 function create(req, res, next) {
     const { data: { deliverTo, mobileNumber, status, dishes } = {} } = req.body
     const newOrder = { 
@@ -56,6 +61,7 @@ function create(req, res, next) {
     res.status(201).json({ data: newOrder })
 }
 
+// checks that the order exists and establishes res.locals.order
 function orderExists(req, res, next) {
     const { orderId } = req.params
     const foundOrder = orders.find((order) => order.id == orderId)
@@ -69,10 +75,12 @@ function orderExists(req, res, next) {
     })
 }
 
+// reads out the unique order
 function read(req, res, next) {
     res.json({ data: res.locals.order })
 }
 
+// checks that the status property is one of the four options => "pending", "preparing", "out-for-delivery", "delivered"
 function statusPropertyIsValid(req, res, next){
     const { data: { status } = {} } = req.body
     const validStatus = ["pending", "preparing", "out-for-delivery", "delivered"]
@@ -85,6 +93,7 @@ function statusPropertyIsValid(req, res, next){
     })
 }
 
+// updates the order object
 function update(req, res, next) {
     const order = res.locals.order
     const { data: { deliverTo, mobileNumber, status, dishes } = {} } = req.body
@@ -97,6 +106,7 @@ function update(req, res, next) {
     res.json({ data: order })
 }
 
+// checks if the status is !pending Goal: only allow users to delete if the status is pending
 function checkStatusPending(req, res, next) {
     const status = res.locals.order.status
     if (status !== "pending") {
@@ -108,12 +118,14 @@ function checkStatusPending(req, res, next) {
     return next()
 }
 
+// delete a unique order
 function destroy(req, res, next) {
     const index = orders.findIndex((dish) => dish.id === res.locals.order.id)
     const deletedOrder = orders.splice(index, 1)
     res.sendStatus(204)
 }
 
+// if an ID is provided in the req.body on an update method, this function verifies that the id matches the id entered in the path. Goal: prevent user from updating the id
 function orderIdValidation(req, res, next) {
     const { data: { id } = {} } = req.body
     const { orderId } = req.params
@@ -131,6 +143,7 @@ function orderIdValidation(req, res, next) {
     id ? checkIdMatch(id, orderId) : next()
 }
 
+// verifies the quantity property
 function dishQuantityValidation(req, res, next) {
     res.locals.dishesArray.forEach((dish, index) => {
         if(!Number.isInteger(dish.quantity) || dish.quantity <= 0) {
