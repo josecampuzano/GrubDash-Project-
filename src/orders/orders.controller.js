@@ -51,7 +51,7 @@ function checkDishesIsAnArray(req, res, next) {
 function create(req, res, next) {
     const { data: { deliverTo, mobileNumber, status, dishes } = {} } = req.body
     const newOrder = { 
-        id: Number(nextId), 
+        id: nextId(), 
         deliverTo: deliverTo,
         mobileNumber: mobileNumber,
         status: status,

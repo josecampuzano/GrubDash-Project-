@@ -25,7 +25,7 @@ function bodyDataHas(propertyName) {
 function create(req, res, next) {
     const { data: { name, description, price, image_url } = {} } = req.body
     const newDish = {
-        id: Number(nextId),
+        id: nextId(),
         name: name,
         description: description,
         price: price,
@@ -109,8 +109,6 @@ function update(req, res, next) {
 
     res.json({ data: dish })
 }
-
-
 
 
 module.exports = {
