@@ -9,23 +9,23 @@ This project is focused on setting up an API and building out routes so that the
 
 ### src/app.js 
 
-  Contains the Express application
+  - Contains the Express application
   
 ### src/dishes/dishes.controller.js
 
-  Contains the middleware and handlers used to responsd to calls mounted on the path /dsihes
+  - Contains the middleware and handlers used to responsd to calls mounted on the path /dsihes
   
 ### src/dishes/dishes.router.js
 
-  Contains the routes needed for http methods to responsd to calls mounted on the path /dsihes
+  - Contains the routes needed for http methods to responsd to calls mounted on the path /dsihes
   
 ### src/orders/orders.controller.js
 
-  Contains the middleware and handlers used to responsd to calls mounted on the path /orders
+  - Contains the middleware and handlers used to responsd to calls mounted on the path /orders
   
 ### src/orders/dishes.orders.js
 
-  Contains the routes needed for http methods to responsd to calls mounted on the path /orders
+  - Contains the routes needed for http methods to responsd to calls mounted on the path /orders
   
 ## Installing 
 
